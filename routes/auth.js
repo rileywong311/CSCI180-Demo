@@ -65,12 +65,61 @@ router.post('/reset-password', (req, res) => {
 
 
 // ******************************
+//   OBJECT LEVEL DEMO
+// ******************************
+const day = 86400000
+const date = new Date();
+
+
+id = 1
+const orders = [
+  {id: id++, name: "Water Bottle", expected: date.getTime() + day * 2, complete: false},
+  {id: id++, name: "Wireless Mouse", expected: date.getTime() + day * 7, complete: false},
+  {id: id++, name: "CATAN Board Game", expected: date.getTime() + day * 4, complete: false}
+]
+
+// Get order route
+router.get('/orders/:orderId', (req, res) => {
+  const orderId = req.params.orderId;
+  
+  // Find the order
+  const order = orders.find(o => o.id == orderId);
+  if (!order) return res.status(404).send('Order not found');
+  
+  // Return order
+  res.status(200).send(`
+    <body style="display: flex; justify-content: center; margin: auto; font-family: arial">
+      <div style="margin-top: 300px; width: 300px; height: 150px; padding: 15px; border: solid black 1px; border-radius: 4px">
+        <h2>${order.name}</h2>
+        <h3>Expected: ${new Date(order.expected).toDateString()}</h3>
+        <h3>Complete: ${order.complete ? 'complete' : 'incomplete'}</h3>
+      </div>
+    </body>
+  `);
+});
+
+
+// Complete order route
+router.get('/orders/:orderId/complete', (req, res) => {
+  const orderId = req.params.orderId;
+  
+  // Find the order
+  const order = orders.find(o => o.id == orderId);
+  if (!order) return res.status(404).send('Order not found');
+  
+  // Complete order
+  order.complete = true;
+  res.status(200).send(`<h2>Order complete</h2>`);
+  console.log(`API: Order ${order.id} completed`)
+});
+
+
+
+// ******************************
 //   OBJECT-PROPERTY LEVEL DEMO
 // ******************************
 
 // Mock store data
-const day = 86400000
-const date = new Date();
 id = 1
 const items = [
   {id: id++, name: 'Wireless Earbuds', price: 49.99, date: date.getTime() - day * 15, verified: true},
